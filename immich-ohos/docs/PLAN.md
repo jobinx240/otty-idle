@@ -35,7 +35,7 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] Login / Timeline page shells
 - [x] MVP OpenAPI extract script (`scripts/extract_mvp_openapi.py`)
 - [x] Open / build with Command Line Tools 26 (HAP succeeds)
-- [ ] Stable emulator/device UI run (blocked: Linux Emulator kernel panic on this VM)
+- [x] Stable emulator UI run (GUI + 2GB AVD; see `docs/EMULATOR.md`)
 
 ### P1 — Auth
 
@@ -44,8 +44,8 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] `POST /auth/validateToken` on cold start
 - [x] `GET /users/me` for profile header
 - [x] Logout clears token
-- [x] API verification via `scripts/e2e_client_flow.mjs` (demo)
-- [ ] On-device UI verification
+- [x] API verification via `scripts/e2e_client_flow.mjs` (demo + local Immich)
+- [x] On-device UI verification (emulator Login → Timeline)
 
 ### P2 — Timeline
 
@@ -55,7 +55,7 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] 3-column Grid UI
 - [x] Full-screen preview viewer (`AssetViewerPage`, preview size)
 - [x] API verification (buckets + authenticated thumb bytes)
-- [ ] On-device grid verification
+- [x] On-device grid verification (real thumbnails on emulator)
 - [ ] Video playback (later)
 
 ### P3 — Backup / Upload
@@ -63,9 +63,9 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] PhotoViewPicker selection UI (`BackupPage`)
 - [x] `POST /assets` multipart upload (`AssetApi`)
 - [x] Sequential foreground queue with status rows
-- [ ] Upload API check against **self-hosted** Immich (public demo returns 403)
-- [ ] On-device upload verification
-- [ ] Checksum header (`x-immich-checksum`) when feasible
+- [x] Upload API check against **self-hosted** Immich (`e2e_client_flow.mjs` + local Docker)
+- [x] On-device upload verification (long-press Backup title → debug rawfile → Upload)
+- [x] Checksum header (`x-immich-checksum` SHA-1 Base64 via `ChecksumUtil`)
 - [ ] Background upload (WorkScheduler)
 
 ### P4 — Albums & search
@@ -73,9 +73,9 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] Albums list (`AlbumsPage` + `AlbumApi`)
 - [x] Album detail via timeline buckets filtered by `albumId`
 - [x] Metadata search (`SearchPage` + `POST /search/metadata`)
-- [x] API verification (albums + search) on demo
+- [x] API verification (albums + search) on demo / local
 - [ ] Smart search / people (later)
-- [ ] On-device UI verification
+- [x] On-device UI verification (Albums list + Search results on emulator)
 
 ### P5 — Hardening (personal)
 

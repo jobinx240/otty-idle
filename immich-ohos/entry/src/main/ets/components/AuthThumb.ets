@@ -6,13 +6,20 @@ import { thumbnailLoader } from '../service/ThumbnailLoader';
  */
 @Component
 export struct AuthThumb {
-  @Prop assetId: string = '';
+  @Watch('onAssetIdChange') @Prop assetId: string = '';
   @Prop thumbSizeName: string = 'thumbnail';
   @Prop cellSize: number = 110;
   @State private pixelMap: image.PixelMap | undefined = undefined;
   @State private failed: boolean = false;
+  @State private loading: boolean = false;
 
   aboutToAppear(): void {
+    this.reload();
+  }
+
+  onAssetIdChange(): void {
+    this.pixelMap = undefined;
+    this.failed = false;
     this.reload();
   }
 
@@ -21,16 +28,25 @@ export struct AuthThumb {
       return;
     }
     const id = this.assetId;
+    this.loading = true;
     thumbnailLoader.load(id, this.thumbSizeName).then((pm: image.PixelMap | undefined) => {
       if (id !== this.assetId) {
         return;
       }
+      this.loading = false;
       if (pm) {
         this.pixelMap = pm;
         this.failed = false;
       } else {
+        this.pixelMap = undefined;
         this.failed = true;
       }
+    }).catch(() => {
+      if (id !== this.assetId) {
+        return;
+      }
+      this.loading = false;
+      this.failed = true;
     });
   }
 

@@ -1,4 +1,6 @@
 import { photoAccessHelper } from '@kit.MediaLibraryKit';
+import { common } from '@kit.AbilityKit';
+import { fileIo as fs } from '@kit.CoreFileKit';
 import { AssetApi } from '../service/AssetApi';
 import { LocalUploadItem } from '../model/AssetModels';
 import { HttpError, immichHttp } from '../service/HttpClient';
@@ -34,6 +36,27 @@ export class BackupViewModel {
       this.doneCount = 0;
     } catch (e) {
       this.errorMessage = `Picker failed: ${String(e)}`;
+    }
+  }
+
+  /**
+   * Queue the bundled debug JPEG (rawfile) for emulator / CI upload checks.
+   * Long-press the Backup title to invoke.
+   */
+  async queueDebugRawfile(context: common.UIAbilityContext): Promise<void> {
+    this.errorMessage = '';
+    try {
+      const raw = await context.resourceManager.getRawFileContent('debug_upload.jpg');
+      const fileName = `debug_upload_${Date.now()}.jpg`;
+      const path = `${context.cacheDir}/${fileName}`;
+      const file = fs.openSync(path, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      fs.writeSync(file.fd, raw.buffer);
+      fs.closeSync(file);
+      const deviceAssetId = `ohos_debug_${Date.now()}`;
+      this.items = [new LocalUploadItem(path, fileName, deviceAssetId)];
+      this.doneCount = 0;
+    } catch (e) {
+      this.errorMessage = `Debug queue failed: ${String(e)}`;
     }
   }
 

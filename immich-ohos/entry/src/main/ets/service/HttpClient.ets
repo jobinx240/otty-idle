@@ -87,17 +87,30 @@ export class HttpClient {
 
   /**
    * POST multipart/form-data (asset upload).
+   * @param extraHeaders optional Immich headers such as x-immich-checksum
    */
-  async postMultipart<T>(path: string, forms: Array<http.MultiFormData>): Promise<T> {
+  async postMultipart<T>(
+    path: string,
+    forms: Array<http.MultiFormData>,
+    extraHeaders?: Record<string, string>
+  ): Promise<T> {
     const url = this.buildUrl(path);
     const client = http.createHttp();
     try {
+      const headers: Record<string, string> = {
+        'Accept': 'application/json',
+        'Content-Type': 'multipart/form-data'
+      };
+      if (extraHeaders) {
+        const keys = Object.keys(extraHeaders);
+        for (let i = 0; i < keys.length; i++) {
+          const key = keys[i];
+          headers[key] = extraHeaders[key];
+        }
+      }
       const response = await client.request(url, {
         method: http.RequestMethod.POST,
-        header: this.authHeaders({
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data'
-        }),
+        header: this.authHeaders(headers),
         multiFormDataList: forms,
         expectDataType: http.HttpDataType.STRING,
         connectTimeout: 30000,

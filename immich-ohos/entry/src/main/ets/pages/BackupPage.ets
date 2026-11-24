@@ -1,3 +1,4 @@
+import { common } from '@kit.AbilityKit';
 import { BackupViewModel } from '../viewmodel/BackupViewModel';
 import { LocalUploadItem } from '../model/AssetModels';
 import { NavUtil } from '../common/NavUtil';
@@ -23,6 +24,16 @@ struct BackupPage {
     this.syncFromVm();
   }
 
+  private async onDebugQueue(): Promise<void> {
+    const ctx = this.getUIContext().getHostContext() as common.UIAbilityContext | undefined;
+    if (!ctx) {
+      this.errorMessage = 'No ability context for debug upload';
+      return;
+    }
+    await this.vm.queueDebugRawfile(ctx);
+    this.syncFromVm();
+  }
+
   private async onUpload(): Promise<void> {
     this.busy = true;
     await this.vm.uploadAll(() => {
@@ -45,6 +56,12 @@ struct BackupPage {
           .fontWeight(FontWeight.Medium)
           .margin({ left: 8 })
           .layoutWeight(1)
+          .gesture(
+            LongPressGesture({ repeat: false })
+              .onAction(() => {
+                this.onDebugQueue();
+              })
+          )
       }
       .width('100%')
       .padding(12)

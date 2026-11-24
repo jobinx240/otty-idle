@@ -1,6 +1,7 @@
 import { http } from '@kit.NetworkKit';
 import { HttpClient, immichHttp } from './HttpClient';
 import { AssetMediaResponseDto } from '../model/AssetModels';
+import { ChecksumUtil } from '../common/ChecksumUtil';
 
 /**
  * Immich asset upload API (multipart).
@@ -15,6 +16,7 @@ export class AssetApi {
   /**
    * Upload one local file URI to Immich.
    * Sends deviceAssetId/deviceId for older Immich servers; current OpenAPI marks them optional.
+   * Adds x-immich-checksum (SHA-1 Base64) when the path is hashable.
    */
   async uploadFile(
     fileUri: string,
@@ -68,7 +70,12 @@ export class AssetApi {
       }
     ];
 
-    return this.http.postMultipart<AssetMediaResponseDto>('/assets', forms);
+    const checksum = await ChecksumUtil.sha1Base64ForPath(fileUri);
+    const extra: Record<string, string> = {};
+    if (checksum.length > 0) {
+      extra['x-immich-checksum'] = checksum;
+    }
+    return this.http.postMultipart<AssetMediaResponseDto>('/assets', forms, extra);
   }
 
   /**

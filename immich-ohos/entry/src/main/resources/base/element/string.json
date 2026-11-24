@@ -1,0 +1,72 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Immich HarmonyOS client"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Immich OH entry"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Immich OH"
+    },
+    {
+      "name": "permission_read_media",
+      "value": "Read photos and videos for Immich backup"
+    },
+    {
+      "name": "login_title",
+      "value": "Connect to Immich"
+    },
+    {
+      "name": "server_url",
+      "value": "Server URL"
+    },
+    {
+      "name": "email",
+      "value": "Email"
+    },
+    {
+      "name": "password",
+      "value": "Password"
+    },
+    {
+      "name": "login",
+      "value": "Sign in"
+    },
+    {
+      "name": "logout",
+      "value": "Sign out"
+    },
+    {
+      "name": "timeline_title",
+      "value": "Timeline"
+    },
+    {
+      "name": "checking_session",
+      "value": "Checking session…"
+    },
+    {
+      "name": "backup_title",
+      "value": "Backup"
+    },
+    {
+      "name": "pick_photos",
+      "value": "Pick photos"
+    },
+    {
+      "name": "upload",
+      "value": "Upload"
+    },
+    {
+      "name": "albums_title",
+      "value": "Albums"
+    },
+    {
+      "name": "search_title",
+      "value": "Search"
+    }
+  ]
+}

@@ -45,6 +45,9 @@ tpl["uuid"] = str(uuid.uuid4())
 tpl["type"] = "debug"
 tpl["bundle-info"]["bundle-name"] = bundle
 tpl["validity"] = {"not-before": now - 86400, "not-after": now + 3650 * 86400}
+# Backup needs media read; grant it in the debug provision profile.
+tpl["permissions"] = {"restricted-permissions": ["ohos.permission.READ_IMAGEVIDEO"]}
+tpl["acls"] = {"allowed-acls": ["ohos.permission.READ_IMAGEVIDEO"]}
 (sign / "profile_unsigned.json").write_text(json.dumps(tpl, indent=2))
 dev = tpl["bundle-info"]["development-certificate"]
 (sign / "dev_cert_from_profile.cer").write_text(dev)

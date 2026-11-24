@@ -1,5 +1,6 @@
 import { LoginViewModel } from '../viewmodel/LoginViewModel';
 import { NavUtil } from '../common/NavUtil';
+import { Constants } from '../common/Constants';
 
 @Entry
 @Component
@@ -16,6 +17,13 @@ struct LoginPage {
       this.serverUrl = this.vm.serverUrl;
       this.email = this.vm.email;
     });
+  }
+
+  private applyDebugPrefill(): void {
+    this.serverUrl = Constants.DEBUG_SERVER_URL;
+    this.email = Constants.DEBUG_EMAIL;
+    this.password = Constants.DEBUG_PASSWORD;
+    this.errorMessage = '';
   }
 
   private async onLogin(): Promise<void> {
@@ -40,6 +48,12 @@ struct LoginPage {
         .fontWeight(FontWeight.Medium)
         .fontColor($r('app.color.text_primary'))
         .margin({ bottom: 8 })
+        .gesture(
+          LongPressGesture({ repeat: false })
+            .onAction(() => {
+              this.applyDebugPrefill();
+            })
+        )
 
       Text($r('app.string.server_url'))
         .fontSize(14)

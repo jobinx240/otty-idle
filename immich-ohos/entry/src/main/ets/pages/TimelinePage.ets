@@ -35,52 +35,59 @@ struct TimelinePage {
 
   build() {
     Column() {
-      Row() {
-        Column() {
-          Text($r('app.string.timeline_title'))
-            .fontSize(22)
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('app.color.text_primary'))
-          if (this.userName.length > 0) {
-            Text(this.userName)
-              .fontSize(13)
-              .fontColor($r('app.color.text_secondary'))
-          }
+      Column({ space: 4 }) {
+        Text($r('app.string.timeline_title'))
+          .fontSize(22)
+          .fontWeight(FontWeight.Medium)
+          .fontColor($r('app.color.text_primary'))
+          .maxLines(1)
+          .width('100%')
+        if (this.userName.length > 0) {
+          Text(this.userName)
+            .fontSize(13)
+            .fontColor($r('app.color.text_secondary'))
+            .maxLines(1)
+            .width('100%')
         }
-        .alignItems(HorizontalAlign.Start)
-        .layoutWeight(1)
-
-        Button($r('app.string.albums_title'))
-          .fontSize(13)
-          .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.brand'))
-          .onClick(() => {
-            NavUtil.push(this.getUIContext(), 'pages/AlbumsPage');
-          })
-        Button($r('app.string.search_title'))
-          .fontSize(13)
-          .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.brand'))
-          .onClick(() => {
-            NavUtil.push(this.getUIContext(), 'pages/SearchPage');
-          })
-        Button($r('app.string.backup_title'))
-          .fontSize(13)
-          .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.brand'))
-          .onClick(() => {
-            NavUtil.push(this.getUIContext(), 'pages/BackupPage');
-          })
-        Button($r('app.string.logout'))
-          .fontSize(13)
-          .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.brand'))
-          .onClick(() => {
-            this.onLogout();
-          })
+        Flex({ wrap: FlexWrap.Wrap }) {
+          Button($r('app.string.albums_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/AlbumsPage');
+            })
+          Button($r('app.string.search_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/SearchPage');
+            })
+          Button($r('app.string.backup_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/BackupPage');
+            })
+          Button($r('app.string.logout'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              this.onLogout();
+            })
+        }
+        .width('100%')
       }
       .width('100%')
-      .padding({ left: 12, right: 4, top: 12, bottom: 8 })
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 12, right: 12, top: 12, bottom: 8 })
 
       if (this.busy) {
         LoadingProgress()

@@ -35,16 +35,30 @@ IMMICH_PASSWORD=Admin12345 \
 node /home/ubuntu/immich-ohos/scripts/e2e_client_flow.mjs
 ```
 
-## What fails here
+## Working boot recipe (this VM)
 
-Cold boot of `immichPhone` reaches ~60–65s, then:
+`-noWindow` cold boots still hit a sceneboard/sysrq kernel panic around 60s.
+**GUI boot** with Qt/`DISPLAY=:1`, **2 GB RAM** AVD, and `bootMode reset` stays up:
 
-```text
-Kernel panic - not syncing: sysrq triggered crash
+```bash
+./Emulator -create immichPhoneLowMem -deviceType phone \
+  -osVersion 'HarmonyOS 7.0.0(26.0.0)' \
+  -instancePath "$EMU/instances" -imageRoot "$EMU/images" \
+  -memory 2 -storage 4 -hotBoot false
+
+export DISPLAY=:1 QT_QPA_PLATFORM=xcb XDG_RUNTIME_DIR=/tmp/runtime-ubuntu
+./Emulator -start immichPhoneLowMem -instancePath "$EMU/instances" \
+  -imageRoot "$EMU/images" -hdcport 11112 -bootMode reset
 ```
 
-`hdc list targets` stays empty; HAP cannot be installed on this VM’s emulator.
-Likely causes: nested virtualization + headless/cloud memory balloon + Emulator sceneboard panic on Linux CLI.
+Verified on this VM:
+
+- `hdc` target `127.0.0.1:11112`
+- signed HAP install + launch
+- Login (long-press title for local debug prefill) → Timeline with thumbnails
+- Albums / Search / Backup navigation reachable
+- Local Immich via emulator: `http://10.0.2.2:2283`
+
 
 ## Commands (when retrying)
 

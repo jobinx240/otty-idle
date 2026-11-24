@@ -53,9 +53,8 @@ export class ThumbnailLoader {
     try {
       const bytes = await this.http.getArrayBuffer(`/assets/${assetId}/thumbnail`, { 'size': size });
       const source = image.createImageSource(bytes);
-      const pixelMap = await source.createPixelMap({
-        desiredSize: size === 'preview' ? { width: 720, height: 720 } : { width: 256, height: 256 }
-      });
+      // Let the decoder pick native size; forced upscale of tiny test assets can fail.
+      const pixelMap = await source.createPixelMap();
       source.release();
       if (pixelMap) {
         // Bound cache size for personal MVP.

@@ -1,0 +1,11 @@
+{
+  "name": "immich-ohos",
+  "version": "0.1.0",
+  "description": "Personal Immich client for HarmonyOS NEXT",
+  "main": "",
+  "author": "personal",
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {},
+  "modelVersion": "6.0.0"
+}

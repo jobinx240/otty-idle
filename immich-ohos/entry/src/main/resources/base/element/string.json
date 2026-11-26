@@ -1,0 +1,128 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Immich HarmonyOS client"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Immich OH entry"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Immich OH"
+    },
+    {
+      "name": "permission_read_media",
+      "value": "Read photos and videos for Immich backup"
+    },
+    {
+      "name": "login_title",
+      "value": "Connect to Immich"
+    },
+    {
+      "name": "server_url",
+      "value": "Server URL"
+    },
+    {
+      "name": "email",
+      "value": "Email"
+    },
+    {
+      "name": "password",
+      "value": "Password"
+    },
+    {
+      "name": "login",
+      "value": "Sign in"
+    },
+    {
+      "name": "logout",
+      "value": "Sign out"
+    },
+    {
+      "name": "timeline_title",
+      "value": "Timeline"
+    },
+    {
+      "name": "checking_session",
+      "value": "Checking session…"
+    },
+    {
+      "name": "backup_title",
+      "value": "Backup"
+    },
+    {
+      "name": "pick_photos",
+      "value": "Pick photos"
+    },
+    {
+      "name": "upload",
+      "value": "Upload"
+    },
+    {
+      "name": "albums_title",
+      "value": "Albums"
+    },
+    {
+      "name": "search_title",
+      "value": "Search"
+    },
+    {
+      "name": "smart_search",
+      "value": "Smart"
+    },
+    {
+      "name": "favorites_title",
+      "value": "Favorites"
+    },
+    {
+      "name": "people_title",
+      "value": "People"
+    },
+    {
+      "name": "settings_title",
+      "value": "Settings"
+    },
+    {
+      "name": "trash_title",
+      "value": "Trash"
+    },
+    {
+      "name": "archive_title",
+      "value": "Archive"
+    },
+    {
+      "name": "add_to_album",
+      "value": "Add to album"
+    },
+    {
+      "name": "create_album",
+      "value": "Create"
+    },
+    {
+      "name": "tags_title",
+      "value": "Tags"
+    },
+    {
+      "name": "add_to_tag",
+      "value": "Add to tag"
+    },
+    {
+      "name": "shared_links_title",
+      "value": "Shared links"
+    },
+    {
+      "name": "custom_ca_toggle",
+      "value": "Trust custom CA (self-signed TLS)"
+    },
+    {
+      "name": "custom_ca_pem",
+      "value": "CA certificate (PEM)"
+    },
+    {
+      "name": "schedule_background",
+      "value": "Finish later (WorkScheduler)"
+    }
+  ]
+}

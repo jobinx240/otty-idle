@@ -1,0 +1,20 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/LoginPage",
+    "pages/TimelinePage",
+    "pages/AssetViewerPage",
+    "pages/BackupPage",
+    "pages/AlbumsPage",
+    "pages/AlbumDetailPage",
+    "pages/SearchPage",
+    "pages/PeoplePage",
+    "pages/SettingsPage",
+    "pages/TrashPage",
+    "pages/ArchivePage",
+    "pages/AddToAlbumPage",
+    "pages/TagsPage",
+    "pages/AddToTagPage",
+    "pages/SharedLinksPage"
+  ]
+}

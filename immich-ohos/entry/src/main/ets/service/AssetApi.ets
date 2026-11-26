@@ -11,6 +11,14 @@ class UpdateFavoriteBody {
   }
 }
 
+class UpdateVisibilityBody {
+  visibility: string;
+
+  constructor(visibility: string) {
+    this.visibility = visibility;
+  }
+}
+
 class BulkDeleteBody {
   ids: string[];
   force: boolean;
@@ -42,10 +50,32 @@ export class AssetApi {
   }
 
   /**
+   * PUT /assets/{id} — set Immich visibility (timeline | archive | hidden | locked).
+   */
+  async setVisibility(id: string, visibility: string): Promise<AssetResponseDto> {
+    return this.http.putJson<AssetResponseDto>(`/assets/${id}`, new UpdateVisibilityBody(visibility));
+  }
+
+  /** Archive asset (visibility=archive). */
+  async archive(id: string): Promise<AssetResponseDto> {
+    return this.setVisibility(id, 'archive');
+  }
+
+  /** Return asset to the main timeline. */
+  async unarchive(id: string): Promise<AssetResponseDto> {
+    return this.setVisibility(id, 'timeline');
+  }
+
+  /**
    * DELETE /assets — soft-delete (trash) unless force is true.
    */
   async deleteAssets(ids: string[], force: boolean = false): Promise<void> {
     await this.http.deleteJson<void>('/assets', new BulkDeleteBody(ids, force));
+  }
+
+  /** GET /assets/{id}/original — original file bytes. */
+  async downloadOriginal(id: string): Promise<ArrayBuffer> {
+    return this.http.getArrayBuffer(`/assets/${id}/original`);
   }
 
   /**

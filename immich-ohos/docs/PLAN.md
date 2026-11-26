@@ -82,7 +82,10 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 
 - [ ] Self-signed TLS option (dev only)
 - [x] Settings page (server/about/version, clear thumb cache, sign out)
-- [x] Asset viewer actions (favorite / trash / EXIF line)
+- [x] Asset viewer actions (favorite / trash / archive / EXIF / download original)
+- [x] Trash page (browse / restore one / restore all / empty)
+- [x] Archive page (browse / unarchive)
+- [x] Create album + add asset to album (`AlbumsPage`, `AddToAlbumPage`)
 - [ ] Version gate (app ↔ server major/minor)
 - [ ] Pin Immich OpenAPI version used for generation
 - [ ] Background upload (WorkScheduler) — still optional
@@ -96,7 +99,8 @@ entry/src/main/ets/
   model/        DTOs aligned with OpenAPI
   service/      HttpClient, Auth/Timeline/Asset/Album/Search/People/Server APIs
   viewmodel/    Login / Timeline / Backup / Search / People state
-  pages/        Login, Timeline, AssetViewer, Backup, Albums, Search, People, Settings
+  pages/        Login, Timeline, AssetViewer, Backup, Albums, Search, People,
+                Settings, Trash, Archive, AddToAlbum
   entryability/ app entry
 ```
 
@@ -114,10 +118,15 @@ entry/src/main/ets/
 | Upload | POST | `/assets` |
 | Thumb | GET | `/assets/{id}/thumbnail` |
 | Asset info | GET | `/assets/{id}` |
-| Favorite | PUT | `/assets/{id}` |
+| Favorite / archive | PUT | `/assets/{id}` |
 | Trash | DELETE | `/assets` |
+| Restore trash | POST | `/trash/restore/assets` |
+| Empty trash | POST | `/trash/empty` |
+| Original | GET | `/assets/{id}/original` |
 | Video | GET | `/assets/{id}/video/playback` |
 | Albums | GET | `/albums` |
+| Create album | POST | `/albums` |
+| Add to album | PUT | `/albums/{id}/assets` |
 | Search | POST | `/search/metadata` |
 | Smart search | POST | `/search/smart` |
 | People | GET | `/people` |

@@ -82,6 +82,22 @@ struct TimelinePage {
             .onClick(() => {
               NavUtil.push(this.getUIContext(), 'pages/PeoplePage');
             })
+          Button($r('app.string.archive_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/ArchivePage');
+            })
+          Button($r('app.string.trash_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/TrashPage');
+            })
           Button($r('app.string.settings_title'))
             .fontSize(13)
             .height(36)

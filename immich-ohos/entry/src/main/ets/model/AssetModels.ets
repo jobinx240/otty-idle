@@ -17,6 +17,8 @@ export interface AssetResponseDto {
   isFavorite?: boolean;
   isArchived?: boolean;
   isTrashed?: boolean;
+  /** Immich AssetVisibility: timeline | archive | hidden | locked */
+  visibility?: string;
   duration?: number | null;
   localDateTime?: string;
   fileCreatedAt?: string;

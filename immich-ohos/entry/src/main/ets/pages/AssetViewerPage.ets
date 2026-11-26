@@ -3,6 +3,7 @@ import { common } from '@kit.AbilityKit';
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { thumbnailLoader } from '../service/ThumbnailLoader';
 import { AssetApi } from '../service/AssetApi';
+import { TrashApi } from '../service/TrashApi';
 import { AssetResponseDto } from '../model/AssetModels';
 import { HttpError, immichHttp } from '../service/HttpClient';
 import { NavUtil } from '../common/NavUtil';
@@ -17,11 +18,14 @@ struct AssetViewerPage {
   @State private busy: boolean = true;
   @State private info: AssetResponseDto | undefined = undefined;
   @State private isFavorite: boolean = false;
+  @State private isArchived: boolean = false;
+  @State private isTrashed: boolean = false;
   @State private isVideo: boolean = false;
   @State private videoPath: string = '';
   @State private videoBusy: boolean = false;
   @State private actionMessage: string = '';
   private assetApi: AssetApi = new AssetApi(immichHttp);
+  private trashApi: TrashApi = new TrashApi(immichHttp);
 
   aboutToAppear(): void {
     const params = NavUtil.params<AssetRouteParams>(this.getUIContext());
@@ -40,8 +44,7 @@ struct AssetViewerPage {
     try {
       await immichHttp.loadFromSession();
       this.info = await this.assetApi.getInfo(this.assetId);
-      this.isFavorite = this.info.isFavorite === true;
-      this.isVideo = (this.info.type ?? '').toUpperCase() === 'VIDEO';
+      this.applyInfo(this.info);
     } catch (e) {
       if (e instanceof HttpError) {
         this.errorMessage = `Info ${e.code}: ${e.message}`;
@@ -59,14 +62,36 @@ struct AssetViewerPage {
     this.busy = false;
   }
 
+  private applyInfo(info: AssetResponseDto): void {
+    this.isFavorite = info.isFavorite === true;
+    this.isArchived = info.isArchived === true || info.visibility === 'archive';
+    this.isTrashed = info.isTrashed === true;
+    this.isVideo = (info.type ?? '').toUpperCase() === 'VIDEO';
+  }
+
   private async onToggleFavorite(): Promise<void> {
     try {
       const next = !this.isFavorite;
       this.info = await this.assetApi.setFavorite(this.assetId, next);
-      this.isFavorite = this.info.isFavorite === true;
+      this.applyInfo(this.info);
       this.actionMessage = this.isFavorite ? 'Added to favorites' : 'Removed from favorites';
     } catch (e) {
       this.actionMessage = e instanceof HttpError ? `Favorite failed (${e.code})` : String(e);
+    }
+  }
+
+  private async onToggleArchive(): Promise<void> {
+    try {
+      if (this.isArchived) {
+        this.info = await this.assetApi.unarchive(this.assetId);
+        this.actionMessage = 'Unarchived';
+      } else {
+        this.info = await this.assetApi.archive(this.assetId);
+        this.actionMessage = 'Archived';
+      }
+      this.applyInfo(this.info);
+    } catch (e) {
+      this.actionMessage = e instanceof HttpError ? `Archive failed (${e.code})` : String(e);
     }
   }
 
@@ -78,6 +103,42 @@ struct AssetViewerPage {
     } catch (e) {
       this.actionMessage = e instanceof HttpError ? `Trash failed (${e.code})` : String(e);
     }
+  }
+
+  private async onRestore(): Promise<void> {
+    try {
+      await this.trashApi.restoreAssets([this.assetId]);
+      this.actionMessage = 'Restored from trash';
+      this.isTrashed = false;
+      await this.loadAll();
+    } catch (e) {
+      this.actionMessage = e instanceof HttpError ? `Restore failed (${e.code})` : String(e);
+    }
+  }
+
+  private async onDownloadOriginal(): Promise<void> {
+    const ctx = this.getUIContext().getHostContext() as common.UIAbilityContext | undefined;
+    if (!ctx) {
+      this.actionMessage = 'No context for download';
+      return;
+    }
+    this.actionMessage = 'Downloading original…';
+    try {
+      const bytes = await this.assetApi.downloadOriginal(this.assetId);
+      const name = this.info?.originalFileName ?? `${this.assetId}.bin`;
+      const safe = name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `${ctx.filesDir}/immich_dl_${safe}`;
+      const file = fs.openSync(path, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
+      fs.writeSync(file.fd, bytes);
+      fs.closeSync(file);
+      this.actionMessage = `Saved ${bytes.byteLength} bytes to filesDir`;
+    } catch (e) {
+      this.actionMessage = e instanceof HttpError ? `Download ${e.code}: ${e.message}` : String(e);
+    }
+  }
+
+  private onAddToAlbum(): void {
+    NavUtil.push(this.getUIContext(), 'pages/AddToAlbumPage', new AssetRouteParams(this.assetId));
   }
 
   private async onPlayVideo(): Promise<void> {
@@ -134,20 +195,51 @@ struct AssetViewerPage {
             NavUtil.back(this.getUIContext());
           })
         Blank()
-        Button(this.isFavorite ? '★ Favorited' : '☆ Favorite')
+        Button(this.isFavorite ? '★' : '☆')
           .fontSize(13)
           .backgroundColor(Color.Transparent)
           .fontColor($r('app.color.brand'))
           .onClick(() => {
             this.onToggleFavorite();
           })
-        Button('Trash')
+        Button(this.isArchived ? 'Unarchive' : 'Archive')
           .fontSize(13)
           .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.danger'))
+          .fontColor($r('app.color.brand'))
           .onClick(() => {
-            this.onTrash();
+            this.onToggleArchive();
           })
+        Button('Album')
+          .fontSize(13)
+          .backgroundColor(Color.Transparent)
+          .fontColor($r('app.color.brand'))
+          .onClick(() => {
+            this.onAddToAlbum();
+          })
+        Button('Save')
+          .fontSize(13)
+          .backgroundColor(Color.Transparent)
+          .fontColor($r('app.color.brand'))
+          .onClick(() => {
+            this.onDownloadOriginal();
+          })
+        if (this.isTrashed) {
+          Button('Restore')
+            .fontSize(13)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              this.onRestore();
+            })
+        } else {
+          Button('Trash')
+            .fontSize(13)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.danger'))
+            .onClick(() => {
+              this.onTrash();
+            })
+        }
       }
       .width('100%')
       .padding(12)

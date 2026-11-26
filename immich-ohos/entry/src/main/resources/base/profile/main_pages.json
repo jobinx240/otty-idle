@@ -9,6 +9,9 @@
     "pages/AlbumDetailPage",
     "pages/SearchPage",
     "pages/PeoplePage",
-    "pages/SettingsPage"
+    "pages/SettingsPage",
+    "pages/TrashPage",
+    "pages/ArchivePage",
+    "pages/AddToAlbumPage"
   ]
 }

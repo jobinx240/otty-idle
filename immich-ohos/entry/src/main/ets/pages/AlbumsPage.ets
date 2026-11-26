@@ -9,6 +9,7 @@ struct AlbumsPage {
   @State private albums: AlbumListItem[] = [];
   @State private busy: boolean = false;
   @State private errorMessage: string = '';
+  @State private newName: string = '';
   private vm: AlbumsViewModel = new AlbumsViewModel();
 
   aboutToAppear(): void {
@@ -25,6 +26,17 @@ struct AlbumsPage {
 
   private openAlbum(item: AlbumListItem): void {
     NavUtil.push(this.getUIContext(), 'pages/AlbumDetailPage', new AlbumRouteParams(item.id, item.albumName));
+  }
+
+  private async onCreate(): Promise<void> {
+    this.busy = true;
+    const created = await this.vm.createAlbum(this.newName);
+    this.albums = this.vm.albums;
+    this.errorMessage = this.vm.errorMessage;
+    this.busy = this.vm.busy;
+    if (created) {
+      this.newName = '';
+    }
   }
 
   build() {
@@ -45,14 +57,35 @@ struct AlbumsPage {
       .width('100%')
       .padding(12)
 
+      Row({ space: 8 }) {
+        TextInput({ placeholder: 'New album name', text: this.newName })
+          .layoutWeight(1)
+          .height(44)
+          .onChange((v: string) => {
+            this.newName = v;
+          })
+        Button($r('app.string.create_album'))
+          .height(44)
+          .backgroundColor($r('app.color.brand'))
+          .enabled(!this.busy)
+          .onClick(() => {
+            this.onCreate();
+          })
+      }
+      .width('100%')
+      .padding({ left: 16, right: 16, bottom: 8 })
+
       if (this.busy) {
         LoadingProgress().width(48).height(48).margin({ top: 40 })
-      } else if (this.errorMessage.length > 0) {
+      } else if (this.errorMessage.length > 0 && this.albums.length === 0) {
         Text(this.errorMessage).fontColor($r('app.color.danger')).padding(16)
         Button('Retry').onClick(() => {
           this.reload();
         })
       } else {
+        if (this.errorMessage.length > 0) {
+          Text(this.errorMessage).fontColor($r('app.color.danger')).padding({ left: 16, right: 16 })
+        }
         List() {
           ForEach(this.albums, (item: AlbumListItem) => {
             ListItem() {

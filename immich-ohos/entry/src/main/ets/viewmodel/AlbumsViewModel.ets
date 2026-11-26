@@ -35,6 +35,31 @@ export class AlbumsViewModel {
     }
   }
 
+  /** Create an empty album and refresh the list. */
+  async createAlbum(albumName: string): Promise<AlbumListItem | undefined> {
+    const name = albumName.trim();
+    if (name.length === 0) {
+      this.errorMessage = 'Enter an album name';
+      return undefined;
+    }
+    this.busy = true;
+    this.errorMessage = '';
+    try {
+      await immichHttp.loadFromSession();
+      const created = await this.albumApi.createAlbum(name);
+      await this.loadList();
+      return created;
+    } catch (e) {
+      if (e instanceof HttpError) {
+        this.errorMessage = `Create album (${e.code}): ${e.message}`;
+      } else {
+        this.errorMessage = `Create album: ${String(e)}`;
+      }
+      this.busy = false;
+      return undefined;
+    }
+  }
+
   async loadAlbumAssets(albumId: string, albumName: string): Promise<void> {
     this.busy = true;
     this.errorMessage = '';

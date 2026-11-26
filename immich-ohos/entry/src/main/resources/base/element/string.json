@@ -83,6 +83,22 @@
     {
       "name": "settings_title",
       "value": "Settings"
+    },
+    {
+      "name": "trash_title",
+      "value": "Trash"
+    },
+    {
+      "name": "archive_title",
+      "value": "Archive"
+    },
+    {
+      "name": "add_to_album",
+      "value": "Add to album"
+    },
+    {
+      "name": "create_album",
+      "value": "Create"
     }
   ]
 }

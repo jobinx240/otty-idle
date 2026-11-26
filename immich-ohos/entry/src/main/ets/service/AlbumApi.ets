@@ -46,6 +46,11 @@ export class AlbumApi {
     await this.http.putJson<void>(`/albums/${albumId}/assets`, new BulkIdsBody(assetIds));
   }
 
+  /** DELETE /albums/{id} */
+  async deleteAlbum(albumId: string): Promise<void> {
+    await this.http.deleteJson<void>(`/albums/${albumId}`);
+  }
+
   async getAlbumBuckets(albumId: string): Promise<TimeBucketsResponseDto[]> {
     return this.http.getJson<TimeBucketsResponseDto[]>('/timeline/buckets', {
       'albumId': albumId

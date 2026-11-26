@@ -99,6 +99,30 @@
     {
       "name": "create_album",
       "value": "Create"
+    },
+    {
+      "name": "tags_title",
+      "value": "Tags"
+    },
+    {
+      "name": "add_to_tag",
+      "value": "Add to tag"
+    },
+    {
+      "name": "shared_links_title",
+      "value": "Shared links"
+    },
+    {
+      "name": "custom_ca_toggle",
+      "value": "Trust custom CA (self-signed TLS)"
+    },
+    {
+      "name": "custom_ca_pem",
+      "value": "CA certificate (PEM)"
+    },
+    {
+      "name": "schedule_background",
+      "value": "Finish later (WorkScheduler)"
     }
   ]
 }

@@ -33,6 +33,14 @@
         ]
       }
     ],
+    "extensionAbilities": [
+      {
+        "name": "UploadWorkAbility",
+        "srcEntry": "./ets/workers/UploadWorkAbility.ets",
+        "type": "workScheduler",
+        "exported": false
+      }
+    ],
     "requestPermissions": [
       {
         "name": "ohos.permission.INTERNET"

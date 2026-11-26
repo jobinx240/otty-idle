@@ -4,6 +4,7 @@ import { fileIo as fs } from '@kit.CoreFileKit';
 import { thumbnailLoader } from '../service/ThumbnailLoader';
 import { AssetApi } from '../service/AssetApi';
 import { TrashApi } from '../service/TrashApi';
+import { SharedLinkApi } from '../service/SharedLinkApi';
 import { AssetResponseDto } from '../model/AssetModels';
 import { HttpError, immichHttp } from '../service/HttpClient';
 import { NavUtil } from '../common/NavUtil';
@@ -26,6 +27,7 @@ struct AssetViewerPage {
   @State private actionMessage: string = '';
   private assetApi: AssetApi = new AssetApi(immichHttp);
   private trashApi: TrashApi = new TrashApi(immichHttp);
+  private sharedLinkApi: SharedLinkApi = new SharedLinkApi(immichHttp);
 
   aboutToAppear(): void {
     const params = NavUtil.params<AssetRouteParams>(this.getUIContext());
@@ -141,6 +143,19 @@ struct AssetViewerPage {
     NavUtil.push(this.getUIContext(), 'pages/AddToAlbumPage', new AssetRouteParams(this.assetId));
   }
 
+  private onAddToTag(): void {
+    NavUtil.push(this.getUIContext(), 'pages/AddToTagPage', new AssetRouteParams(this.assetId));
+  }
+
+  private async onShareLink(): Promise<void> {
+    try {
+      const link = await this.sharedLinkApi.createForAsset(this.assetId);
+      this.actionMessage = SharedLinkApi.publicUrl(immichHttp.getApiBase(), link);
+    } catch (e) {
+      this.actionMessage = e instanceof HttpError ? `Share failed (${e.code})` : String(e);
+    }
+  }
+
   private async onPlayVideo(): Promise<void> {
     if (this.videoPath.length > 0) {
       return;
@@ -215,6 +230,20 @@ struct AssetViewerPage {
           .fontColor($r('app.color.brand'))
           .onClick(() => {
             this.onAddToAlbum();
+          })
+        Button('Tag')
+          .fontSize(13)
+          .backgroundColor(Color.Transparent)
+          .fontColor($r('app.color.brand'))
+          .onClick(() => {
+            this.onAddToTag();
+          })
+        Button('Share')
+          .fontSize(13)
+          .backgroundColor(Color.Transparent)
+          .fontColor($r('app.color.brand'))
+          .onClick(() => {
+            this.onShareLink();
           })
         Button('Save')
           .fontSize(13)

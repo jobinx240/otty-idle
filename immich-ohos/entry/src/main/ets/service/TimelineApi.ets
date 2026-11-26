@@ -7,6 +7,7 @@ export class TimelineFilter {
   isTrashed: boolean = false;
   /** Immich AssetVisibility: timeline | archive | hidden | locked */
   visibility: string = '';
+  tagId: string = '';
 
   static album(albumId: string): TimelineFilter {
     const f = new TimelineFilter();
@@ -23,6 +24,12 @@ export class TimelineFilter {
   static archive(): TimelineFilter {
     const f = new TimelineFilter();
     f.visibility = 'archive';
+    return f;
+  }
+
+  static tag(tagId: string): TimelineFilter {
+    const f = new TimelineFilter();
+    f.tagId = tagId;
     return f;
   }
 }
@@ -60,6 +67,9 @@ export class TimelineApi {
     }
     if (filter.visibility.length > 0) {
       query['visibility'] = filter.visibility;
+    }
+    if (filter.tagId.length > 0) {
+      query['tagId'] = filter.tagId;
     }
     return Object.keys(query).length > 0 ? query : undefined;
   }

@@ -12,6 +12,9 @@
     "pages/SettingsPage",
     "pages/TrashPage",
     "pages/ArchivePage",
-    "pages/AddToAlbumPage"
+    "pages/AddToAlbumPage",
+    "pages/TagsPage",
+    "pages/AddToTagPage",
+    "pages/SharedLinksPage"
   ]
 }

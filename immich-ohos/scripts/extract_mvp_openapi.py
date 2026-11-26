@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract Immich OpenAPI paths needed for the HarmonyOS MVP client."""
+"""Extract Immich OpenAPI paths used by the HarmonyOS client and pin the upstream version."""
 
 from __future__ import annotations
 
@@ -9,9 +9,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 UPSTREAM = Path("/home/ubuntu/immich/open-api/immich-openapi-specs.json")
 OUT = ROOT / "docs" / "openapi-mvp.json"
+PIN = ROOT / "docs" / "OPENAPI_PIN.md"
+UPSTREAM_REF = ROOT / ".immich-upstream-ref"
 
 KEEP_PATHS = {
     "/server/ping",
+    "/server/about",
+    "/server/version",
     "/auth/login",
     "/auth/logout",
     "/auth/validateToken",
@@ -20,28 +24,44 @@ KEEP_PATHS = {
     "/timeline/buckets",
     "/timeline/bucket",
     "/assets",
+    "/albums",
+    "/albums/{id}",
+    "/albums/{id}/assets",
+    "/search/metadata",
+    "/search/smart",
+    "/people",
+    "/trash/empty",
+    "/trash/restore",
+    "/trash/restore/assets",
+    "/tags",
+    "/tags/{id}/assets",
+    "/shared-links",
+    "/shared-links/{id}",
 }
+
+PREFIX_KEEP = (
+    "/assets/",
+)
 
 
 def main() -> None:
     spec = json.loads(UPSTREAM.read_text())
     paths = {k: v for k, v in spec["paths"].items() if k in KEEP_PATHS}
-    # Also keep thumbnail path if present
     for key, value in spec["paths"].items():
-        if key.startswith("/assets/") and "thumbnail" in key:
+        if any(key.startswith(p) for p in PREFIX_KEEP):
             paths[key] = value
 
+    info_version = spec.get("info", {}).get("version", "unknown")
     slim = {
         "openapi": spec.get("openapi"),
         "info": {
-            "title": "Immich OH MVP",
-            "version": spec.get("info", {}).get("version", "unknown"),
+            "title": "Immich OH client API subset",
+            "version": info_version,
         },
         "paths": paths,
         "components": {"schemas": {}},
     }
 
-    # Collect $ref schema names recursively (shallow pass repeated)
     refs: set[str] = set()
 
     def walk(node: object) -> None:
@@ -73,7 +93,27 @@ def main() -> None:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(slim, indent=2) + "\n")
+
+    upstream_ref = UPSTREAM_REF.read_text().strip() if UPSTREAM_REF.exists() else "unknown"
+    PIN.write_text(
+        "\n".join(
+            [
+                "# Immich OpenAPI pin",
+                "",
+                f"- Upstream git ref (`.immich-upstream-ref`): `{upstream_ref}`",
+                f"- OpenAPI `info.version`: `{info_version}`",
+                f"- Extracted paths: `{len(paths)}`",
+                f"- Extracted schemas: `{len(slim['components']['schemas'])}`",
+                f"- Artifact: `docs/openapi-mvp.json` (regenerate with `scripts/extract_mvp_openapi.py`)",
+                "",
+                "This HarmonyOS client is written against the pinned subset above.",
+                "Re-run the extract script after bumping `.immich-upstream-ref`.",
+                "",
+            ]
+        )
+    )
     print(f"Wrote {OUT} with {len(paths)} paths and {len(slim['components']['schemas'])} schemas")
+    print(f"Wrote {PIN}")
 
 
 if __name__ == "__main__":

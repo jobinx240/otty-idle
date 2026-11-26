@@ -9,13 +9,21 @@ struct BackupPage {
   @State private items: LocalUploadItem[] = [];
   @State private busy: boolean = false;
   @State private errorMessage: string = '';
+  @State private scheduleMessage: string = '';
   @State private doneCount: number = 0;
   private vm: BackupViewModel = new BackupViewModel();
+
+  aboutToAppear(): void {
+    this.vm.loadPersistedQueue().then(() => {
+      this.syncFromVm();
+    });
+  }
 
   private syncFromVm(): void {
     this.items = this.vm.items.slice();
     this.busy = this.vm.busy;
     this.errorMessage = this.vm.errorMessage;
+    this.scheduleMessage = this.vm.scheduleMessage;
     this.doneCount = this.vm.doneCount;
   }
 
@@ -39,6 +47,11 @@ struct BackupPage {
     await this.vm.uploadAll(() => {
       this.syncFromVm();
     });
+    this.syncFromVm();
+  }
+
+  private async onScheduleBackground(): Promise<void> {
+    await this.vm.scheduleBackground();
     this.syncFromVm();
   }
 
@@ -87,10 +100,28 @@ struct BackupPage {
       .width('100%')
       .padding({ left: 16, right: 16, bottom: 8 })
 
+      Button($r('app.string.schedule_background'))
+        .width('90%')
+        .height(40)
+        .backgroundColor(Color.Transparent)
+        .fontColor($r('app.color.brand'))
+        .enabled(this.items.length > 0)
+        .onClick(() => {
+          this.onScheduleBackground();
+        })
+
       if (this.items.length > 0) {
         Text(`Selected ${this.items.length} · Done ${this.doneCount}`)
           .fontSize(13)
           .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+          .padding({ left: 16, right: 16, bottom: 8 })
+      }
+
+      if (this.scheduleMessage.length > 0) {
+        Text(this.scheduleMessage)
+          .fontSize(12)
+          .fontColor('#FFD54F')
           .width('100%')
           .padding({ left: 16, right: 16, bottom: 8 })
       }

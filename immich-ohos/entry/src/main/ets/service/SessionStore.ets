@@ -3,7 +3,7 @@ import { common } from '@kit.AbilityKit';
 import { Constants } from '../common/Constants';
 
 /**
- * Persists Immich server URL and access token for cold start.
+ * Persists Immich session, TLS CA override, and backup upload queue.
  */
 export class SessionStore {
   private static prefs: preferences.Preferences | null = null;
@@ -33,6 +33,31 @@ export class SessionStore {
 
   static async getUserName(): Promise<string> {
     return (await SessionStore.requirePrefs().get(Constants.KEY_USER_NAME, '')) as string;
+  }
+
+  static async getUseCustomCa(): Promise<boolean> {
+    return (await SessionStore.requirePrefs().get(Constants.KEY_USE_CUSTOM_CA, false)) as boolean;
+  }
+
+  static async getCustomCaPem(): Promise<string> {
+    return (await SessionStore.requirePrefs().get(Constants.KEY_CUSTOM_CA_PEM, '')) as string;
+  }
+
+  static async setCustomCa(useCustomCa: boolean, pem: string): Promise<void> {
+    const prefs = SessionStore.requirePrefs();
+    await prefs.put(Constants.KEY_USE_CUSTOM_CA, useCustomCa);
+    await prefs.put(Constants.KEY_CUSTOM_CA_PEM, pem);
+    await prefs.flush();
+  }
+
+  static async getUploadQueueJson(): Promise<string> {
+    return (await SessionStore.requirePrefs().get(Constants.KEY_UPLOAD_QUEUE, '[]')) as string;
+  }
+
+  static async setUploadQueueJson(json: string): Promise<void> {
+    const prefs = SessionStore.requirePrefs();
+    await prefs.put(Constants.KEY_UPLOAD_QUEUE, json);
+    await prefs.flush();
   }
 
   static async saveSession(

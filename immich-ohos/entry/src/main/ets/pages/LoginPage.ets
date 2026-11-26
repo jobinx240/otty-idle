@@ -8,14 +8,19 @@ struct LoginPage {
   @State private serverUrl: string = '';
   @State private email: string = '';
   @State private password: string = '';
+  @State private useCustomCa: boolean = false;
+  @State private customCaPem: string = '';
   @State private busy: boolean = false;
   @State private errorMessage: string = '';
+  @State private warningMessage: string = '';
   private vm: LoginViewModel = new LoginViewModel();
 
   aboutToAppear(): void {
     this.vm.loadSavedServer().then(() => {
       this.serverUrl = this.vm.serverUrl;
       this.email = this.vm.email;
+      this.useCustomCa = this.vm.useCustomCa;
+      this.customCaPem = this.vm.customCaPem;
     });
   }
 
@@ -24,17 +29,22 @@ struct LoginPage {
     this.email = Constants.DEBUG_EMAIL;
     this.password = Constants.DEBUG_PASSWORD;
     this.errorMessage = '';
+    this.warningMessage = '';
   }
 
   private async onLogin(): Promise<void> {
     this.vm.serverUrl = this.serverUrl;
     this.vm.email = this.email;
     this.vm.password = this.password;
+    this.vm.useCustomCa = this.useCustomCa;
+    this.vm.customCaPem = this.customCaPem;
     this.busy = true;
     this.errorMessage = '';
+    this.warningMessage = '';
     const ok = await this.vm.login();
     this.busy = this.vm.busy;
     this.errorMessage = this.vm.errorMessage;
+    this.warningMessage = this.vm.warningMessage;
     this.password = this.vm.password;
     if (ok) {
       NavUtil.replace(this.getUIContext(), 'pages/TimelinePage');
@@ -42,7 +52,7 @@ struct LoginPage {
   }
 
   build() {
-    Column({ space: 16 }) {
+    Column({ space: 12 }) {
       Text($r('app.string.login_title'))
         .fontSize(28)
         .fontWeight(FontWeight.Medium)
@@ -89,6 +99,37 @@ struct LoginPage {
           this.password = v;
         })
 
+      Row() {
+        Text($r('app.string.custom_ca_toggle'))
+          .fontSize(14)
+          .fontColor($r('app.color.text_primary'))
+          .layoutWeight(1)
+        Toggle({ type: ToggleType.Switch, isOn: this.useCustomCa })
+          .onChange((on: boolean) => {
+            this.useCustomCa = on;
+          })
+      }
+      .width('100%')
+
+      if (this.useCustomCa) {
+        Text($r('app.string.custom_ca_pem'))
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+        TextArea({ placeholder: '-----BEGIN CERTIFICATE-----', text: this.customCaPem })
+          .width('100%')
+          .height(100)
+          .onChange((v: string) => {
+            this.customCaPem = v;
+          })
+      }
+
+      if (this.warningMessage.length > 0) {
+        Text(this.warningMessage)
+          .fontSize(13)
+          .fontColor('#E6A23C')
+          .width('100%')
+      }
       if (this.errorMessage.length > 0) {
         Text(this.errorMessage)
           .fontSize(13)

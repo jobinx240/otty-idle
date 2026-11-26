@@ -4,6 +4,8 @@ import { SessionStore } from '../service/SessionStore';
 import { thumbnailLoader } from '../service/ThumbnailLoader';
 import { HttpError, immichHttp } from '../service/HttpClient';
 import { NavUtil } from '../common/NavUtil';
+import { VersionGate } from '../common/VersionGate';
+import { Constants } from '../common/Constants';
 
 @Entry
 @Component
@@ -13,6 +15,9 @@ struct SettingsPage {
   @State private userName: string = '';
   @State private versionText: string = '';
   @State private aboutText: string = '';
+  @State private versionWarning: string = '';
+  @State private useCustomCa: boolean = false;
+  @State private customCaPem: string = '';
   @State private message: string = '';
   @State private busy: boolean = false;
   private serverApi: ServerApi = new ServerApi(immichHttp);
@@ -30,6 +35,8 @@ struct SettingsPage {
       this.serverUrl = await SessionStore.getServerUrl();
       this.email = await SessionStore.getUserEmail();
       this.userName = await SessionStore.getUserName();
+      this.useCustomCa = await SessionStore.getUseCustomCa();
+      this.customCaPem = await SessionStore.getCustomCaPem();
       try {
         const me = await this.authApi.getMe();
         this.email = me.email ?? this.email;
@@ -39,7 +46,9 @@ struct SettingsPage {
       }
       try {
         const ver = await this.serverApi.version();
-        this.versionText = `${ver.major ?? '?'}.${ver.minor ?? '?'}.${ver.patch ?? '?'}`;
+        const gate = VersionGate.evaluate(ver);
+        this.versionText = gate.versionText;
+        this.versionWarning = gate.warning;
       } catch (_e) {
         this.versionText = 'unknown';
       }
@@ -59,6 +68,12 @@ struct SettingsPage {
     this.message = 'Thumbnail cache cleared';
   }
 
+  private async onSaveCa(): Promise<void> {
+    await SessionStore.setCustomCa(this.useCustomCa, this.customCaPem.trim());
+    immichHttp.setCustomCaPem(this.useCustomCa ? this.customCaPem.trim() : '');
+    this.message = 'TLS settings saved';
+  }
+
   private async onLogout(): Promise<void> {
     try {
       await this.authApi.logout();
@@ -71,80 +86,122 @@ struct SettingsPage {
   }
 
   build() {
-    Column({ space: 12 }) {
-      Row() {
-        Button('Back')
-          .backgroundColor(Color.Transparent)
-          .fontColor($r('app.color.brand'))
+    Scroll() {
+      Column({ space: 12 }) {
+        Row() {
+          Button('Back')
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.back(this.getUIContext());
+            })
+          Text($r('app.string.settings_title'))
+            .fontSize(20)
+            .fontWeight(FontWeight.Medium)
+            .margin({ left: 8 })
+            .layoutWeight(1)
+        }
+        .width('100%')
+        .padding(12)
+
+        if (this.busy) {
+          LoadingProgress().width(40).height(40)
+        }
+
+        Text('Account')
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+          .padding({ left: 16, right: 16 })
+        Text(`${this.userName} (${this.email})`)
+          .fontSize(16)
+          .fontColor($r('app.color.text_primary'))
+          .width('100%')
+          .padding({ left: 16, right: 16 })
+
+        Text('Server')
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 8 })
+        Text(this.serverUrl)
+          .fontSize(14)
+          .fontColor($r('app.color.text_primary'))
+          .width('100%')
+          .padding({ left: 16, right: 16 })
+        Text(`API ${this.versionText}${this.aboutText.length > 0 ? ` · ${this.aboutText}` : ''} · app ${Constants.APP_VERSION_NAME}`)
+          .fontSize(13)
+          .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+          .padding({ left: 16, right: 16 })
+        if (this.versionWarning.length > 0) {
+          Text(this.versionWarning)
+            .fontSize(13)
+            .fontColor('#E6A23C')
+            .width('100%')
+            .padding({ left: 16, right: 16 })
+        }
+
+        Text($r('app.string.custom_ca_toggle'))
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 8 })
+        Row() {
+          Text('Trust custom CA PEM')
+            .fontSize(14)
+            .layoutWeight(1)
+            .padding({ left: 16 })
+          Toggle({ type: ToggleType.Switch, isOn: this.useCustomCa })
+            .margin({ right: 16 })
+            .onChange((on: boolean) => {
+              this.useCustomCa = on;
+            })
+        }
+        .width('100%')
+        if (this.useCustomCa) {
+          TextArea({ placeholder: '-----BEGIN CERTIFICATE-----', text: this.customCaPem })
+            .width('90%')
+            .height(100)
+            .onChange((v: string) => {
+              this.customCaPem = v;
+            })
+          Button('Save TLS settings')
+            .width('90%')
+            .backgroundColor($r('app.color.brand'))
+            .onClick(() => {
+              this.onSaveCa();
+            })
+        }
+
+        if (this.message.length > 0) {
+          Text(this.message)
+            .fontSize(13)
+            .fontColor($r('app.color.brand'))
+            .padding({ left: 16, right: 16 })
+        }
+
+        Button('Clear thumbnail cache')
+          .width('90%')
+          .margin({ top: 16 })
+          .backgroundColor($r('app.color.brand'))
           .onClick(() => {
-            NavUtil.back(this.getUIContext());
+            this.onClearCache();
           })
-        Text($r('app.string.settings_title'))
-          .fontSize(20)
-          .fontWeight(FontWeight.Medium)
-          .margin({ left: 8 })
-          .layoutWeight(1)
+
+        Button($r('app.string.logout'))
+          .width('90%')
+          .margin({ top: 8, bottom: 24 })
+          .backgroundColor($r('app.color.danger'))
+          .onClick(() => {
+            this.onLogout();
+          })
       }
       .width('100%')
-      .padding(12)
-
-      if (this.busy) {
-        LoadingProgress().width(40).height(40)
-      }
-
-      Text('Account')
-        .fontSize(14)
-        .fontColor($r('app.color.text_secondary'))
-        .width('100%')
-        .padding({ left: 16, right: 16 })
-      Text(`${this.userName} (${this.email})`)
-        .fontSize(16)
-        .fontColor($r('app.color.text_primary'))
-        .width('100%')
-        .padding({ left: 16, right: 16 })
-
-      Text('Server')
-        .fontSize(14)
-        .fontColor($r('app.color.text_secondary'))
-        .width('100%')
-        .padding({ left: 16, right: 16, top: 8 })
-      Text(this.serverUrl)
-        .fontSize(14)
-        .fontColor($r('app.color.text_primary'))
-        .width('100%')
-        .padding({ left: 16, right: 16 })
-      Text(`API version ${this.versionText}${this.aboutText.length > 0 ? ` · ${this.aboutText}` : ''}`)
-        .fontSize(13)
-        .fontColor($r('app.color.text_secondary'))
-        .width('100%')
-        .padding({ left: 16, right: 16 })
-
-      if (this.message.length > 0) {
-        Text(this.message)
-          .fontSize(13)
-          .fontColor($r('app.color.brand'))
-          .padding({ left: 16, right: 16 })
-      }
-
-      Button('Clear thumbnail cache')
-        .width('90%')
-        .margin({ top: 16 })
-        .backgroundColor($r('app.color.brand'))
-        .onClick(() => {
-          this.onClearCache();
-        })
-
-      Button($r('app.string.logout'))
-        .width('90%')
-        .margin({ top: 8 })
-        .backgroundColor($r('app.color.danger'))
-        .onClick(() => {
-          this.onLogout();
-        })
+      .alignItems(HorizontalAlign.Center)
     }
     .width('100%')
     .height('100%')
-    .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('app.color.page_background'))
   }
 }

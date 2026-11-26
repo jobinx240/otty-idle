@@ -35,6 +35,24 @@ export class AlbumsViewModel {
     }
   }
 
+  /** Delete an album and refresh the list. */
+  async deleteAlbum(albumId: string): Promise<void> {
+    this.busy = true;
+    this.errorMessage = '';
+    try {
+      await immichHttp.loadFromSession();
+      await this.albumApi.deleteAlbum(albumId);
+      await this.loadList();
+    } catch (e) {
+      if (e instanceof HttpError) {
+        this.errorMessage = `Delete album (${e.code}): ${e.message}`;
+      } else {
+        this.errorMessage = `Delete album: ${String(e)}`;
+      }
+      this.busy = false;
+    }
+  }
+
   /** Create an empty album and refresh the list. */
   async createAlbum(albumName: string): Promise<AlbumListItem | undefined> {
     const name = albumName.trim();

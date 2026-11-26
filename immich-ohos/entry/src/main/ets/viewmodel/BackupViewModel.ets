@@ -4,6 +4,8 @@ import { fileIo as fs } from '@kit.CoreFileKit';
 import { AssetApi } from '../service/AssetApi';
 import { LocalUploadItem } from '../model/AssetModels';
 import { HttpError, immichHttp } from '../service/HttpClient';
+import { UploadQueueStore } from '../service/UploadQueueStore';
+import { BackupScheduler } from '../service/BackupScheduler';
 
 /**
  * Photo picker + sequential Immich upload queue for personal backup.
@@ -13,8 +15,17 @@ export class BackupViewModel {
   busy: boolean = false;
   errorMessage: string = '';
   doneCount: number = 0;
+  scheduleMessage: string = '';
 
   private assetApi: AssetApi = new AssetApi(immichHttp);
+
+  /** Restore unfinished uploads saved for background / cold-start resume. */
+  async loadPersistedQueue(): Promise<void> {
+    const pending = await UploadQueueStore.loadPending();
+    if (pending.length > 0 && this.items.length === 0) {
+      this.items = pending;
+    }
+  }
 
   async pickImages(): Promise<void> {
     this.errorMessage = '';
@@ -69,13 +80,18 @@ export class BackupViewModel {
     this.errorMessage = '';
     this.doneCount = 0;
     await immichHttp.loadFromSession();
+    await UploadQueueStore.savePending(this.items);
 
     const nowIso = new Date().toISOString();
     for (let i = 0; i < this.items.length; i++) {
       const item = this.items[i];
+      if (item.status === 'done' || item.status === 'duplicate') {
+        continue;
+      }
       item.status = 'uploading';
       item.message = '';
       this.items = this.items.slice();
+      await UploadQueueStore.savePending(this.items);
       if (onProgress) {
         onProgress();
       }
@@ -105,14 +121,22 @@ export class BackupViewModel {
         }
       }
       this.items = this.items.slice();
+      await UploadQueueStore.savePending(this.items);
       if (onProgress) {
         onProgress();
       }
     }
+    await UploadQueueStore.savePending(this.items);
     this.busy = false;
     if (onProgress) {
       onProgress();
     }
+  }
+
+  /** Persist remaining items and ask WorkScheduler to finish them later. */
+  async scheduleBackground(): Promise<void> {
+    await UploadQueueStore.savePending(this.items);
+    this.scheduleMessage = BackupScheduler.schedule();
   }
 
   private static fileNameFromUri(uri: string): string {

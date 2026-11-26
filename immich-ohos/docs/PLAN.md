@@ -66,29 +66,31 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] Upload API check against **self-hosted** Immich (`e2e_client_flow.mjs` + local Docker)
 - [x] On-device upload verification (long-press Backup title → debug rawfile → Upload)
 - [x] Checksum header (`x-immich-checksum` SHA-1 Base64 via `ChecksumUtil`)
-- [ ] Background upload (WorkScheduler)
+- [x] Background upload queue + WorkScheduler (`UploadQueueStore`, `UploadWorkAbility`)
 
 ### P4 — Albums & search
 
 - [x] Albums list (`AlbumsPage` + `AlbumApi`)
 - [x] Album detail via timeline buckets filtered by `albumId`
+- [x] Create / delete album
 - [x] Metadata search (`SearchPage` + `POST /search/metadata`)
 - [x] API verification (albums + search) on demo / local
 - [x] Smart search (`POST /search/smart`) + Favorites filter
 - [x] People list (`PeoplePage`) → person asset search
+- [x] Tags list / create / filter / add-to-tag
+- [x] Shared links create / list / delete
 - [x] On-device UI verification (Albums list + Search results on emulator)
 
 ### P5 — Hardening (personal)
 
-- [ ] Self-signed TLS option (dev only)
-- [x] Settings page (server/about/version, clear thumb cache, sign out)
-- [x] Asset viewer actions (favorite / trash / archive / EXIF / download original)
+- [x] Self-signed TLS option (custom CA PEM via `HttpClient.caData`)
+- [x] Settings page (server/about/version, TLS, clear thumb cache, sign out)
+- [x] Asset viewer actions (favorite / trash / archive / tag / share / EXIF / download)
 - [x] Trash page (browse / restore one / restore all / empty)
 - [x] Archive page (browse / unarchive)
 - [x] Create album + add asset to album (`AlbumsPage`, `AddToAlbumPage`)
-- [ ] Version gate (app ↔ server major/minor)
-- [ ] Pin Immich OpenAPI version used for generation
-- [ ] Background upload (WorkScheduler) — still optional
+- [x] Version gate (app ↔ server major; soft warn above max)
+- [x] Pin Immich OpenAPI subset (`docs/openapi-mvp.json`, `docs/OPENAPI_PIN.md`)
 
 ## Module map
 
@@ -100,7 +102,8 @@ entry/src/main/ets/
   service/      HttpClient, Auth/Timeline/Asset/Album/Search/People/Server APIs
   viewmodel/    Login / Timeline / Backup / Search / People state
   pages/        Login, Timeline, AssetViewer, Backup, Albums, Search, People,
-                Settings, Trash, Archive, AddToAlbum
+                Settings, Trash, Archive, AddToAlbum, Tags, SharedLinks
+  workers/      UploadWorkAbility (WorkScheduler)
   entryability/ app entry
 ```
 
@@ -130,6 +133,9 @@ entry/src/main/ets/
 | Search | POST | `/search/metadata` |
 | Smart search | POST | `/search/smart` |
 | People | GET | `/people` |
+| Tags | GET/POST | `/tags` |
+| Tag assets | PUT | `/tags/{id}/assets` |
+| Shared links | GET/POST/DELETE | `/shared-links` |
 | Server about | GET | `/server/about` |
 | Server version | GET | `/server/version` |
 

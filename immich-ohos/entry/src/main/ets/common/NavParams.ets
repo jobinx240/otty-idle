@@ -28,3 +28,14 @@ export class PersonRouteParams {
     this.personName = personName;
   }
 }
+
+/** Router params for tag detail / filter. */
+export class TagRouteParams {
+  tagId: string;
+  tagName: string;
+
+  constructor(tagId: string, tagName: string) {
+    this.tagId = tagId;
+    this.tagName = tagName;
+  }
+}

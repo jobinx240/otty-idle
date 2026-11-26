@@ -39,6 +39,14 @@ struct AlbumsPage {
     }
   }
 
+  private async onDelete(item: AlbumListItem): Promise<void> {
+    this.busy = true;
+    await this.vm.deleteAlbum(item.id);
+    this.albums = this.vm.albums;
+    this.errorMessage = this.vm.errorMessage;
+    this.busy = this.vm.busy;
+  }
+
   build() {
     Column() {
       Row() {
@@ -102,12 +110,19 @@ struct AlbumsPage {
                 }
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
+                .onClick(() => {
+                  this.openAlbum(item);
+                })
+                Button('Delete')
+                  .fontSize(12)
+                  .backgroundColor($r('app.color.danger'))
+                  .enabled(!this.busy)
+                  .onClick(() => {
+                    this.onDelete(item);
+                  })
               }
               .padding(14)
               .width('100%')
-              .onClick(() => {
-                this.openAlbum(item);
-              })
             }
           }, (item: AlbumListItem) => item.id)
         }

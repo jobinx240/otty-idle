@@ -98,6 +98,22 @@ struct TimelinePage {
             .onClick(() => {
               NavUtil.push(this.getUIContext(), 'pages/TrashPage');
             })
+          Button($r('app.string.tags_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/TagsPage');
+            })
+          Button($r('app.string.shared_links_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/SharedLinksPage');
+            })
           Button($r('app.string.settings_title'))
             .fontSize(13)
             .height(36)

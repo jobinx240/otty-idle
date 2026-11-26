@@ -12,6 +12,25 @@ export class Constants {
   static readonly KEY_ACCESS_TOKEN: string = 'accessToken';
   static readonly KEY_USER_EMAIL: string = 'userEmail';
   static readonly KEY_USER_NAME: string = 'userName';
+  /** When true, HttpClient sends SessionStore custom CA PEM as caData. */
+  static readonly KEY_USE_CUSTOM_CA: string = 'useCustomCa';
+  /** PEM text for a single custom CA (self-signed Immich HTTPS). */
+  static readonly KEY_CUSTOM_CA_PEM: string = 'customCaPem';
+  /** JSON array of pending LocalUploadItem snapshots for background resume. */
+  static readonly KEY_UPLOAD_QUEUE: string = 'uploadQueue';
+
+  /**
+   * Immich server major compatibility window for this client build.
+   * Login fails below MIN; above MAX shows a soft warning only.
+   */
+  static readonly MIN_SERVER_MAJOR: number = 1;
+  static readonly MAX_SERVER_MAJOR: number = 3;
+
+  /** App label shown next to version gate messages. */
+  static readonly APP_VERSION_NAME: string = '0.1.0';
+
+  /** WorkScheduler deferred upload work id. */
+  static readonly UPLOAD_WORK_ID: number = 1001;
 
   /**
    * Emulator → host Immich (QEMU user networking). Long-press the login title to apply.

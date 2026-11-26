@@ -17,16 +17,25 @@ export class HttpError extends Error {
 export class HttpClient {
   private apiBase: string = '';
   private accessToken: string = '';
+  private customCaPem: string = '';
 
   async loadFromSession(): Promise<void> {
     const raw = await SessionStore.getServerUrl();
     this.apiBase = raw.length > 0 ? normalizeApiBaseUrl(raw) : '';
     this.accessToken = await SessionStore.getAccessToken();
+    const useCa = await SessionStore.getUseCustomCa();
+    const pem = await SessionStore.getCustomCaPem();
+    this.customCaPem = useCa && pem.length > 0 ? pem : '';
   }
 
   setEndpoint(serverUrl: string, accessToken: string = ''): void {
     this.apiBase = normalizeApiBaseUrl(serverUrl);
     this.accessToken = accessToken;
+  }
+
+  /** Apply custom CA PEM for self-signed HTTPS (empty clears). */
+  setCustomCaPem(pem: string): void {
+    this.customCaPem = pem;
   }
 
   getApiBase(): string {
@@ -77,13 +86,13 @@ export class HttpClient {
     const url = this.buildUrl(path, query);
     const client = http.createHttp();
     try {
-      const response = await client.request(url, {
+      const response = await client.request(url, this.withTls({
         method: http.RequestMethod.GET,
         header: this.authHeaders({ 'Accept': '*/*' }),
         expectDataType: http.HttpDataType.ARRAY_BUFFER,
         connectTimeout: 15000,
         readTimeout: 60000
-      });
+      }));
       if (response.responseCode < 200 || response.responseCode >= 300) {
         throw new HttpError(response.responseCode, `HTTP ${response.responseCode}`);
       }
@@ -116,17 +125,16 @@ export class HttpClient {
           headers[key] = extraHeaders[key];
         }
       }
-      const response = await client.request(url, {
+      const response = await client.request(url, this.withTls({
         method: http.RequestMethod.POST,
         header: this.authHeaders(headers),
         multiFormDataList: forms,
         expectDataType: http.HttpDataType.STRING,
         connectTimeout: 30000,
         readTimeout: 300000
-      });
+      }));
       const code = response.responseCode;
       const raw = typeof response.result === 'string' ? response.result : `${response.result}`;
-      // Immich returns 200 (duplicate) or 201 (created)
       if (code < 200 || code >= 300) {
         throw new HttpError(code, raw.length > 0 ? raw : `HTTP ${code}`);
       }
@@ -141,6 +149,13 @@ export class HttpClient {
 
   thumbnailUrl(assetId: string, size: string = 'thumbnail'): string {
     return this.buildUrl(`/assets/${assetId}/thumbnail`, { 'size': size });
+  }
+
+  private withTls(options: http.HttpRequestOptions): http.HttpRequestOptions {
+    if (this.customCaPem.length > 0) {
+      options.caData = this.customCaPem;
+    }
+    return options;
   }
 
   private buildUrl(path: string, query?: Record<string, string>): string {
@@ -171,7 +186,7 @@ export class HttpClient {
     const url = this.buildUrl(path, query);
     const client = http.createHttp();
     try {
-      const response = await client.request(url, {
+      const response = await client.request(url, this.withTls({
         method: method as http.RequestMethod,
         header: this.authHeaders({
           'Accept': 'application/json',
@@ -181,7 +196,7 @@ export class HttpClient {
         expectDataType: http.HttpDataType.STRING,
         connectTimeout: 15000,
         readTimeout: 30000
-      });
+      }));
 
       const code = response.responseCode;
       const raw = typeof response.result === 'string' ? response.result : `${response.result}`;

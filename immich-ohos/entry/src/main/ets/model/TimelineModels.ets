@@ -18,8 +18,11 @@ export interface TimelineAssetDto {
 }
 
 /**
- * GET /timeline/bucket payload (shape may include nested arrays; MVP reads id list).
+ * GET /timeline/bucket payload (columnar arrays from Immich).
  */
 export interface TimeBucketAssetResponseDto {
   id: string[];
+  isImage?: boolean[];
+  isFavorite?: boolean[];
+  duration?: (number | null)[];
 }

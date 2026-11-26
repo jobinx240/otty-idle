@@ -62,6 +62,14 @@ export class HttpClient {
     return this.requestJson<T>('POST', path, body);
   }
 
+  async putJson<T>(path: string, body?: object): Promise<T> {
+    return this.requestJson<T>('PUT', path, body);
+  }
+
+  async deleteJson<T>(path: string, body?: object): Promise<T> {
+    return this.requestJson<T>('DELETE', path, body);
+  }
+
   /**
    * GET binary body (thumbnails / original bytes).
    */

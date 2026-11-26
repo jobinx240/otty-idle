@@ -67,6 +67,22 @@
     {
       "name": "search_title",
       "value": "Search"
+    },
+    {
+      "name": "smart_search",
+      "value": "Smart"
+    },
+    {
+      "name": "favorites_title",
+      "value": "Favorites"
+    },
+    {
+      "name": "people_title",
+      "value": "People"
+    },
+    {
+      "name": "settings_title",
+      "value": "Settings"
     }
   ]
 }

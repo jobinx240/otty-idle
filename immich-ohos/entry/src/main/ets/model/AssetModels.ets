@@ -7,6 +7,34 @@ export interface AssetMediaResponseDto {
 }
 
 /**
+ * Subset of GET /assets/{id} used by the viewer and settings.
+ */
+export interface AssetResponseDto {
+  id: string;
+  type: string;
+  originalFileName?: string;
+  originalMimeType?: string;
+  isFavorite?: boolean;
+  isArchived?: boolean;
+  isTrashed?: boolean;
+  duration?: number | null;
+  localDateTime?: string;
+  fileCreatedAt?: string;
+  exifInfo?: ExifResponseDto;
+}
+
+/** Optional EXIF fields shown in the asset viewer. */
+export interface ExifResponseDto {
+  make?: string | null;
+  model?: string | null;
+  exifImageWidth?: number | null;
+  exifImageHeight?: number | null;
+  city?: string | null;
+  country?: string | null;
+  description?: string | null;
+}
+
+/**
  * Local file selected for backup upload.
  */
 export class LocalUploadItem {

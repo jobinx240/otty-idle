@@ -17,3 +17,14 @@ export class AssetRouteParams {
     this.assetId = assetId;
   }
 }
+
+/** Router params for person → search page. */
+export class PersonRouteParams {
+  personId: string;
+  personName: string;
+
+  constructor(personId: string, personName: string) {
+    this.personId = personId;
+    this.personName = personName;
+  }
+}

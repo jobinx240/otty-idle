@@ -1,10 +1,28 @@
 import { http } from '@kit.NetworkKit';
 import { HttpClient, immichHttp } from './HttpClient';
-import { AssetMediaResponseDto } from '../model/AssetModels';
+import { AssetMediaResponseDto, AssetResponseDto } from '../model/AssetModels';
 import { ChecksumUtil } from '../common/ChecksumUtil';
 
+class UpdateFavoriteBody {
+  isFavorite: boolean;
+
+  constructor(isFavorite: boolean) {
+    this.isFavorite = isFavorite;
+  }
+}
+
+class BulkDeleteBody {
+  ids: string[];
+  force: boolean;
+
+  constructor(ids: string[], force: boolean) {
+    this.ids = ids;
+    this.force = force;
+  }
+}
+
 /**
- * Immich asset upload API (multipart).
+ * Immich asset upload / detail / favorite / trash API.
  */
 export class AssetApi {
   private http: HttpClient;
@@ -13,9 +31,25 @@ export class AssetApi {
     this.http = httpClient;
   }
 
+  /** GET /assets/{id} */
+  async getInfo(id: string): Promise<AssetResponseDto> {
+    return this.http.getJson<AssetResponseDto>(`/assets/${id}`);
+  }
+
+  /** PUT /assets/{id} — toggle favorite. */
+  async setFavorite(id: string, isFavorite: boolean): Promise<AssetResponseDto> {
+    return this.http.putJson<AssetResponseDto>(`/assets/${id}`, new UpdateFavoriteBody(isFavorite));
+  }
+
+  /**
+   * DELETE /assets — soft-delete (trash) unless force is true.
+   */
+  async deleteAssets(ids: string[], force: boolean = false): Promise<void> {
+    await this.http.deleteJson<void>('/assets', new BulkDeleteBody(ids, force));
+  }
+
   /**
    * Upload one local file URI to Immich.
-   * Sends deviceAssetId/deviceId for older Immich servers; current OpenAPI marks them optional.
    * Adds x-immich-checksum (SHA-1 Base64) when the path is hashable.
    */
   async uploadFile(

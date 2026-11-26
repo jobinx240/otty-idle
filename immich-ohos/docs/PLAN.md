@@ -56,7 +56,7 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] Full-screen preview viewer (`AssetViewerPage`, preview size)
 - [x] API verification (buckets + authenticated thumb bytes)
 - [x] On-device grid verification (real thumbnails on emulator)
-- [ ] Video playback (later)
+- [x] Video download & play in AssetViewer (`/assets/{id}/video/playback` → cache file)
 
 ### P3 — Backup / Upload
 
@@ -74,30 +74,33 @@ Ship a HarmonyOS NEXT (ArkTS / ArkUI) app that talks to a self-hosted Immich ser
 - [x] Album detail via timeline buckets filtered by `albumId`
 - [x] Metadata search (`SearchPage` + `POST /search/metadata`)
 - [x] API verification (albums + search) on demo / local
-- [ ] Smart search / people (later)
+- [x] Smart search (`POST /search/smart`) + Favorites filter
+- [x] People list (`PeoplePage`) → person asset search
 - [x] On-device UI verification (Albums list + Search results on emulator)
 
 ### P5 — Hardening (personal)
 
 - [ ] Self-signed TLS option (dev only)
-- [ ] Logging + error surfaces
+- [x] Settings page (server/about/version, clear thumb cache, sign out)
+- [x] Asset viewer actions (favorite / trash / EXIF line)
 - [ ] Version gate (app ↔ server major/minor)
 - [ ] Pin Immich OpenAPI version used for generation
+- [ ] Background upload (WorkScheduler) — still optional
 
 ## Module map
 
 ```
 entry/src/main/ets/
-  common/       constants, URL helpers
-  components/   AuthThumb
+  common/       constants, URL helpers, checksum
+  components/   AuthThumb (favorite / video badges)
   model/        DTOs aligned with OpenAPI
-  service/      HttpClient, AuthApi, TimelineApi, AssetApi, SessionStore, ThumbnailLoader
-  viewmodel/    Login / Timeline / Backup state
-  pages/        Login, Timeline, AssetViewer, Backup
+  service/      HttpClient, Auth/Timeline/Asset/Album/Search/People/Server APIs
+  viewmodel/    Login / Timeline / Backup / Search / People state
+  pages/        Login, Timeline, AssetViewer, Backup, Albums, Search, People, Settings
   entryability/ app entry
 ```
 
-## Immich API used in MVP
+## Immich API used
 
 | Feature | Method | Path |
 | --- | --- | --- |
@@ -110,6 +113,16 @@ entry/src/main/ets/
 | Bucket | GET | `/timeline/bucket` |
 | Upload | POST | `/assets` |
 | Thumb | GET | `/assets/{id}/thumbnail` |
+| Asset info | GET | `/assets/{id}` |
+| Favorite | PUT | `/assets/{id}` |
+| Trash | DELETE | `/assets` |
+| Video | GET | `/assets/{id}/video/playback` |
+| Albums | GET | `/albums` |
+| Search | POST | `/search/metadata` |
+| Smart search | POST | `/search/smart` |
+| People | GET | `/people` |
+| Server about | GET | `/server/about` |
+| Server version | GET | `/server/version` |
 
 Base URL: user-entered origin + `/api` (same as official clients).
 

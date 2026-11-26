@@ -9,6 +9,8 @@ export struct AuthThumb {
   @Watch('onAssetIdChange') @Prop assetId: string = '';
   @Prop thumbSizeName: string = 'thumbnail';
   @Prop cellSize: number = 110;
+  @Prop isVideo: boolean = false;
+  @Prop isFavorite: boolean = false;
   @State private pixelMap: image.PixelMap | undefined = undefined;
   @State private failed: boolean = false;
   @State private loading: boolean = false;
@@ -51,28 +53,49 @@ export struct AuthThumb {
   }
 
   build() {
-    Column() {
-      if (this.pixelMap) {
-        Image(this.pixelMap)
-          .width(this.cellSize)
-          .height(this.cellSize)
-          .objectFit(ImageFit.Cover)
+    Stack({ alignContent: Alignment.BottomEnd }) {
+      Column() {
+        if (this.pixelMap) {
+          Image(this.pixelMap)
+            .width(this.cellSize)
+            .height(this.cellSize)
+            .objectFit(ImageFit.Cover)
+            .borderRadius(4)
+        } else if (this.failed) {
+          Text('!')
+            .fontSize(16)
+            .fontColor('#999999')
+        } else {
+          LoadingProgress()
+            .width(24)
+            .height(24)
+        }
+      }
+      .width(this.cellSize)
+      .height(this.cellSize)
+      .backgroundColor('#E8E8E8')
+      .borderRadius(4)
+      .justifyContent(FlexAlign.Center)
+      .alignItems(HorizontalAlign.Center)
+
+      if (this.isVideo) {
+        Text('▶')
+          .fontSize(12)
+          .fontColor(Color.White)
+          .backgroundColor('#88000000')
+          .padding({ left: 6, right: 6, top: 2, bottom: 2 })
           .borderRadius(4)
-      } else if (this.failed) {
-        Text('!')
-          .fontSize(16)
-          .fontColor('#999999')
-      } else {
-        LoadingProgress()
-          .width(24)
-          .height(24)
+          .margin(6)
+      }
+      if (this.isFavorite) {
+        Text('★')
+          .fontSize(12)
+          .fontColor('#FFD54F')
+          .margin({ left: 6, top: 6 })
+          .position({ x: 0, y: 0 })
       }
     }
     .width(this.cellSize)
     .height(this.cellSize)
-    .backgroundColor('#E8E8E8')
-    .borderRadius(4)
-    .justifyContent(FlexAlign.Center)
-    .alignItems(HorizontalAlign.Center)
   }
 }

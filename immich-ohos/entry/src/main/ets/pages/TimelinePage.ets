@@ -74,6 +74,22 @@ struct TimelinePage {
             .onClick(() => {
               NavUtil.push(this.getUIContext(), 'pages/BackupPage');
             })
+          Button($r('app.string.people_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/PeoplePage');
+            })
+          Button($r('app.string.settings_title'))
+            .fontSize(13)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor($r('app.color.brand'))
+            .onClick(() => {
+              NavUtil.push(this.getUIContext(), 'pages/SettingsPage');
+            })
           Button($r('app.string.logout'))
             .fontSize(13)
             .height(36)
@@ -119,7 +135,9 @@ struct TimelinePage {
             GridItem() {
               AuthThumb({
                 assetId: item.id,
-                cellSize: this.cellSize
+                cellSize: this.cellSize,
+                isVideo: !item.isImage,
+                isFavorite: item.isFavorite
               })
                 .onClick(() => {
                   NavUtil.push(this.getUIContext(), 'pages/AssetViewerPage', new AssetRouteParams(item.id));

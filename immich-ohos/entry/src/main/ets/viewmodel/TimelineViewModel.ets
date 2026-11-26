@@ -7,10 +7,14 @@ import { TimeBucketsResponseDto } from '../model/TimelineModels';
 export class TimelineAssetCell {
   id: string;
   thumbUrl: string;
+  isImage: boolean;
+  isFavorite: boolean;
 
-  constructor(id: string, thumbUrl: string) {
+  constructor(id: string, thumbUrl: string, isImage: boolean = true, isFavorite: boolean = false) {
     this.id = id;
     this.thumbUrl = thumbUrl;
+    this.isImage = isImage;
+    this.isFavorite = isFavorite;
   }
 }
 
@@ -48,9 +52,13 @@ export class TimelineViewModel {
         const bucket = this.buckets[i];
         const detail = await this.timelineApi.getBucket(bucket.timeBucket);
         const ids = detail.id ?? [];
+        const images = detail.isImage ?? [];
+        const favorites = detail.isFavorite ?? [];
         for (let j = 0; j < ids.length && this.assets.length < maxAssets; j++) {
           const id = ids[j];
-          this.assets.push(new TimelineAssetCell(id, immichHttp.thumbnailUrl(id)));
+          const isImage = images.length > j ? images[j] : true;
+          const isFavorite = favorites.length > j ? favorites[j] : false;
+          this.assets.push(new TimelineAssetCell(id, immichHttp.thumbnailUrl(id), isImage, isFavorite));
         }
       }
     } catch (e) {

@@ -7,6 +7,8 @@
     "pages/BackupPage",
     "pages/AlbumsPage",
     "pages/AlbumDetailPage",
-    "pages/SearchPage"
+    "pages/SearchPage",
+    "pages/PeoplePage",
+    "pages/SettingsPage"
   ]
 }

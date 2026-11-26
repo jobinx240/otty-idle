@@ -1,0 +1,394 @@
+{
+  "generatedAt": "2026-11-26T04:26:59.710Z",
+  "base": "http://127.0.0.1:2283/api",
+  "total": 77,
+  "passed": 77,
+  "failed": 0,
+  "results": [
+    {
+      "id": "code.page.LoginPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/LoginPage.ets"
+    },
+    {
+      "id": "code.page.TimelinePage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/TimelinePage.ets"
+    },
+    {
+      "id": "code.page.AssetViewerPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/AssetViewerPage.ets"
+    },
+    {
+      "id": "code.page.BackupPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/BackupPage.ets"
+    },
+    {
+      "id": "code.page.AlbumsPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/AlbumsPage.ets"
+    },
+    {
+      "id": "code.page.AlbumDetailPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/AlbumDetailPage.ets"
+    },
+    {
+      "id": "code.page.SearchPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/SearchPage.ets"
+    },
+    {
+      "id": "code.page.PeoplePage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/PeoplePage.ets"
+    },
+    {
+      "id": "code.page.SettingsPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/SettingsPage.ets"
+    },
+    {
+      "id": "code.page.TrashPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/TrashPage.ets"
+    },
+    {
+      "id": "code.page.ArchivePage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/ArchivePage.ets"
+    },
+    {
+      "id": "code.page.AddToAlbumPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/AddToAlbumPage.ets"
+    },
+    {
+      "id": "code.page.TagsPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/TagsPage.ets"
+    },
+    {
+      "id": "code.page.AddToTagPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/AddToTagPage.ets"
+    },
+    {
+      "id": "code.page.SharedLinksPage",
+      "ok": true,
+      "detail": "entry/src/main/ets/pages/SharedLinksPage.ets"
+    },
+    {
+      "id": "code.worker.UploadWorkAbility",
+      "ok": true,
+      "detail": "entry/src/main/ets/workers/UploadWorkAbility.ets"
+    },
+    {
+      "id": "code.VersionGate",
+      "ok": true,
+      "detail": "entry/src/main/ets/common/VersionGate.ets"
+    },
+    {
+      "id": "code.HttpClient",
+      "ok": true,
+      "detail": "entry/src/main/ets/service/HttpClient.ets"
+    },
+    {
+      "id": "code.OPENAPI_PIN",
+      "ok": true,
+      "detail": "docs/OPENAPI_PIN.md"
+    },
+    {
+      "id": "code.openapi-mvp",
+      "ok": true,
+      "detail": "docs/openapi-mvp.json"
+    },
+    {
+      "id": "code.main_pages.LoginPage",
+      "ok": true,
+      "detail": "pages/LoginPage"
+    },
+    {
+      "id": "code.main_pages.TimelinePage",
+      "ok": true,
+      "detail": "pages/TimelinePage"
+    },
+    {
+      "id": "code.main_pages.AssetViewerPage",
+      "ok": true,
+      "detail": "pages/AssetViewerPage"
+    },
+    {
+      "id": "code.main_pages.BackupPage",
+      "ok": true,
+      "detail": "pages/BackupPage"
+    },
+    {
+      "id": "code.main_pages.AlbumsPage",
+      "ok": true,
+      "detail": "pages/AlbumsPage"
+    },
+    {
+      "id": "code.main_pages.AlbumDetailPage",
+      "ok": true,
+      "detail": "pages/AlbumDetailPage"
+    },
+    {
+      "id": "code.main_pages.SearchPage",
+      "ok": true,
+      "detail": "pages/SearchPage"
+    },
+    {
+      "id": "code.main_pages.PeoplePage",
+      "ok": true,
+      "detail": "pages/PeoplePage"
+    },
+    {
+      "id": "code.main_pages.SettingsPage",
+      "ok": true,
+      "detail": "pages/SettingsPage"
+    },
+    {
+      "id": "code.main_pages.TrashPage",
+      "ok": true,
+      "detail": "pages/TrashPage"
+    },
+    {
+      "id": "code.main_pages.ArchivePage",
+      "ok": true,
+      "detail": "pages/ArchivePage"
+    },
+    {
+      "id": "code.main_pages.AddToAlbumPage",
+      "ok": true,
+      "detail": "pages/AddToAlbumPage"
+    },
+    {
+      "id": "code.main_pages.TagsPage",
+      "ok": true,
+      "detail": "pages/TagsPage"
+    },
+    {
+      "id": "code.main_pages.AddToTagPage",
+      "ok": true,
+      "detail": "pages/AddToTagPage"
+    },
+    {
+      "id": "code.main_pages.SharedLinksPage",
+      "ok": true,
+      "detail": "pages/SharedLinksPage"
+    },
+    {
+      "id": "code.module.workScheduler",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "code.tls.caData",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "code.versionGate.logic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "api.server.ping",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.server.version",
+      "ok": true,
+      "detail": "3.4.2"
+    },
+    {
+      "id": "api.versionGate.minOk",
+      "ok": true,
+      "detail": "major=3"
+    },
+    {
+      "id": "api.versionGate.inTestedWindow",
+      "ok": true,
+      "detail": "major=3"
+    },
+    {
+      "id": "api.auth.login",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "api.auth.validateToken",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.users.me",
+      "ok": true,
+      "detail": "admin@local.test"
+    },
+    {
+      "id": "api.server.about",
+      "ok": true,
+      "detail": "v3.4.2"
+    },
+    {
+      "id": "api.timeline.buckets",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "api.timeline.bucket",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "id": "api.assets.thumbnail",
+      "ok": true,
+      "detail": "744B"
+    },
+    {
+      "id": "api.assets.info",
+      "ok": true,
+      "detail": "IMAGE"
+    },
+    {
+      "id": "api.assets.favorite",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.assets.archive",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.timeline.archiveBuckets",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "api.assets.unarchive",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.assets.trash",
+      "ok": true,
+      "detail": "204"
+    },
+    {
+      "id": "api.timeline.trashBuckets",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "api.trash.restoreAssets",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.assets.original",
+      "ok": true,
+      "detail": "2023B"
+    },
+    {
+      "id": "api.assets.videoPlayback",
+      "ok": true,
+      "detail": "status=404 (200 if video asset; 4xx acceptable for image)"
+    },
+    {
+      "id": "api.assets.upload",
+      "ok": true,
+      "detail": "200 duplicate"
+    },
+    {
+      "id": "api.albums.create",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "api.albums.list",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "id": "api.albums.addAssets",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.albums.buckets",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "api.albums.delete",
+      "ok": true,
+      "detail": "204"
+    },
+    {
+      "id": "api.search.metadata",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.search.favorites",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.search.smart",
+      "ok": true,
+      "detail": "status=400 (400/500 ok if ML unavailable)"
+    },
+    {
+      "id": "api.people.list",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.tags.create",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "api.tags.list",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "id": "api.tags.addAssets",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "api.tags.buckets",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "api.sharedLinks.create",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "api.sharedLinks.list",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "id": "api.sharedLinks.delete",
+      "ok": true,
+      "detail": "204"
+    },
+    {
+      "id": "api.auth.logout",
+      "ok": true,
+      "detail": "200"
+    }
+  ]
+}

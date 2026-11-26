@@ -140,14 +140,31 @@ async function main() {
   const tb = earlyBuckets.data[0].timeBucket;
   const bucket = await req('GET', `/timeline/bucket?timeBucket=${encodeURIComponent(tb)}`, { token });
   assert((bucket.data?.id || []).length > 0, 'bucket empty');
-  const assetId = bucket.data.id[0];
-  steps.push(`timeline(${bucket.data.id.length})`);
+  const ids = bucket.data.id;
+  steps.push(`timeline(${ids.length})`);
+
+  // Prefer an asset that already has a thumbhash; newly uploaded files may 404 until processed.
+  let assetId = ids[0];
+  const hashes = bucket.data.thumbhash || [];
+  for (let i = 0; i < ids.length; i++) {
+    if (hashes[i]) {
+      assetId = ids[i];
+      break;
+    }
+  }
 
   let thumb = null;
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 40; i++) {
     thumb = await req('GET', `/assets/${assetId}/thumbnail?size=thumbnail`, { token, raw: true });
     if (thumb.status === 200 && thumb.buf.length > 100) {
       break;
+    }
+    // Fall through other ids if the chosen one is still processing.
+    if (thumb.status === 404 && i % 5 === 4) {
+      const next = ids.find((id) => id !== assetId);
+      if (next) {
+        assetId = next;
+      }
     }
     await new Promise((r) => setTimeout(r, 500));
   }
